@@ -8,23 +8,23 @@
 import SwiftUI
 
 public struct CalendarHeight : EnvironmentKey {
-    static var defaultValue : CGFloat = 50
+    public static var defaultValue : CGFloat = 50
 }
 
 public struct CalendarWeekSymbols : EnvironmentKey {
-    static var defaultValue : [String] = Calendar.current.shortWeekdaySymbols
+    public static var defaultValue : [String] = Calendar.current.shortWeekdaySymbols
 }
 
 public struct CalendarShowTitle : EnvironmentKey {
-    static var defaultValue : Bool = true
+    public static var defaultValue : Bool = true
 }
 
 public struct CalendarWeekFont : EnvironmentKey {
-    static var defaultValue : Font = .callout
+    public static var defaultValue : Font = .callout
 }
 
 public struct CalendarWeekColor : EnvironmentKey {
-    static var defaultValue : Color = .secondary
+    public static var defaultValue : Color = .secondary
 }
 
 extension EnvironmentValues {
