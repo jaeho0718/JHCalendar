@@ -13,7 +13,7 @@ public struct JHCalendar<DayContent : View>: View {
     /// - Parameter content : 날짜를 나타낼 뷰입니다.
     /// CalendarComponent를 뷰에 전달합니다.
     /// 기본으로 사용하고 싶으면 DefaultCalendarDayView를 사용하세요.
-    init(@ViewBuilder content : @escaping (CalendarComponent) -> DayContent ){
+    public init(@ViewBuilder content : @escaping (CalendarComponent) -> DayContent ){
         self.content = content
     }
     

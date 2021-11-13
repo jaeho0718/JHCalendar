@@ -13,6 +13,10 @@ public struct DefaultCalendarDayView: View {
     @Environment(\.calendarHeight) var calendarHeight
     var component : CalendarComponent
     
+    public init (component : CalendarComponent) {
+        self.component = component
+    }
+    
     var body: some View {
         Button(action:{
             withAnimation(.easeInOut){

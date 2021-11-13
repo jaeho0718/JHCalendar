@@ -26,7 +26,7 @@ public class CalendarManger : ObservableObject {
     /// - Parameter start : 캘린더의 시작 컴포넌트
     /// - Parameter end : 캘린더의 마지막 컴포넌트
     /// - Parameter point : 캘린더의 초기 선택될 날짜 값
-    init(start : CalendarComponent = .startDefault,
+    public init(start : CalendarComponent = .startDefault,
          end : CalendarComponent = .endDefault,
          point : CalendarComponent = .currentDefault) {
         
