@@ -11,10 +11,10 @@ import SwiftUI
 public class CalendarManger : ObservableObject {
     
     /// 현재 페이지의 년,월 정보입니다.
-    @Published var currentPage : YearMonthComponent
+    @Published public var currentPage : YearMonthComponent
     
     /// 사용자가 선택한 날짜의 컴포넌트 정보입니다.
-    @Published var selectedComponent : CalendarComponent
+    @Published public var selectedComponent : CalendarComponent
     
     /// 캘린더의 시작 날짜 컴포넌트
     var startComponent : CalendarComponent
