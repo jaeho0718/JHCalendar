@@ -31,7 +31,7 @@ public struct JHCalendar<DayContent : View>: View {
                     }).tag(component)
                 }
             }.tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: calendarHeight * 7)
+            .frame(height: calendarHeight * 6)
         }
     }
 }
