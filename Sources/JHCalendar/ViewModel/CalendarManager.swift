@@ -88,11 +88,12 @@ extension CalendarManger {
         if page.startWeek != 0 {
             guard let lastMonth = Calendar.current.date(byAdding: .day , value: -1, to: page.date)
                 else {return components}
-            for week in 0 ..< page.startWeek {
+            for week in 0 ..< page.startWeek - 1 {
                 components.append(MonthDayComponent(index: components.count, isCurrentMonth: false,
                                                     data: CalendarComponent(year: lastMonth.year, month: lastMonth.month, day: lastMonth.day - page.startWeek + week + 1)))
             }
         }
+        
         for day in 0 ..< page.endDay {
             components.append(MonthDayComponent(index: components.count, isCurrentMonth: true,
                                                 data: CalendarComponent(year: page.year, month: page.month, day: day + 1)))

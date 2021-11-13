@@ -43,7 +43,7 @@ struct JHMonthView<MonthContent : View>: View {
 
 struct JHMonthView_Previews: PreviewProvider {
     static var previews: some View {
-        JHMonthView(page: .init(year: 2021, month: 7, day: 1),content: { component in
+        JHMonthView(page: .init(year: 2021, month: 8, day: 1),content: { component in
             Text("\(component.day)")
         })
         .environmentObject(CalendarManger())

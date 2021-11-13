@@ -18,12 +18,12 @@ public struct JHCalendar<DayContent : View>: View {
     }
     
     public var body: some View {
-        VStack(spacing:5){
+        VStack{
             if showTitle {
                 CalendarTitle()
                     .padding(.bottom,20)
             }
-            WeekBar()
+            WeekBar().padding(.vertical)
             TabView(selection: $manager.currentPage ){
                 ForEach(manager.generateMonthComponents()){ component in
                     JHMonthView(page: component.data, content: { day in
