@@ -17,7 +17,7 @@ public struct DefaultCalendarDayView: View {
         self.component = component
     }
     
-    var body: some View {
+    public var body: some View {
         Button(action:{
             withAnimation(.easeInOut){
                 manager.selectedComponent = component

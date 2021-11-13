@@ -48,16 +48,16 @@ public struct CalendarComponent {
 extension CalendarComponent {
     
     /// 현재 날짜로부터 2년전까지 시간
-    static let startDefault : CalendarComponent = .init(year: Date().twoYearBefore.year,
+    public static let startDefault : CalendarComponent = .init(year: Date().twoYearBefore.year,
                                                         month: Date().twoYearBefore.month,
                                                         day: Date().twoYearBefore.day)
     
     /// 현재 날짜로부터 2년후까지 시간
-    static let endDefault : CalendarComponent = .init(year: Date().twoYearLater.year,
+    public static let endDefault : CalendarComponent = .init(year: Date().twoYearLater.year,
                                                         month: Date().twoYearLater.month,
                                                         day: Date().twoYearLater.day)
     
-    static let currentDefault : CalendarComponent = .init(year: Date().year,
+    public static let currentDefault : CalendarComponent = .init(year: Date().year,
                                                           month: Date().month,
                                                           day: Date().day)
 }

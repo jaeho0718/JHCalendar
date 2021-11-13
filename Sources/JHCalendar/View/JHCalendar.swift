@@ -17,7 +17,7 @@ public struct JHCalendar<DayContent : View>: View {
         self.content = content
     }
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing:0){
             if showTitle {
                 CalendarTitle()
