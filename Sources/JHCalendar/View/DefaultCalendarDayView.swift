@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// Default day content
-struct DefaultCalendarDayView: View {
+public struct DefaultCalendarDayView: View {
     @EnvironmentObject var manager : CalendarManger
     @Environment(\.calendarHeight) var calendarHeight
     var component : CalendarComponent

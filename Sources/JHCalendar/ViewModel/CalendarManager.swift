@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// 캘린더의 데이터를 관리하는 Viewmodel 입니다.
-class CalendarManger : ObservableObject {
+public class CalendarManger : ObservableObject {
     
     /// 현재 페이지의 년,월 정보입니다.
     @Published var currentPage : YearMonthComponent

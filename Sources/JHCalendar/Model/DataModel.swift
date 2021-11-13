@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CalendarComponent {
+public struct CalendarComponent {
     var year : Int
     var month : Int
     var day : Int

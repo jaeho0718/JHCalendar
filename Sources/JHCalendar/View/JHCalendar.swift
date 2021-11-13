@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// JHCalendar뷰
-struct JHCalendar<DayContent : View>: View {
+public struct JHCalendar<DayContent : View>: View {
     @Environment(\.calendarHeight) var calendarHeight
     @Environment(\.calendarShowTitle) var showTitle
     
