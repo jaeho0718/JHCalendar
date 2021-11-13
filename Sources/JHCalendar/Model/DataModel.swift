@@ -8,16 +8,16 @@
 import Foundation
 
 public struct CalendarComponent {
-    var year : Int
-    var month : Int
-    var day : Int
+    public var year : Int
+    public var month : Int
+    public var day : Int
     
     ///DateComponts
-    var component : DateComponents {
+    public var component : DateComponents {
         return .init(calendar:.current,year: year, month: month, day: day,hour: 0,minute: 0)
     }
     
-    var date : Date {
+    public var date : Date {
         guard let result = component.date else { return Date() }
         return result
     }
@@ -65,7 +65,7 @@ extension CalendarComponent {
 extension CalendarComponent {
     
     /// 입력받은 컴포넌트와 비교하여 작으면 음수, 같으면 0, 크면 양수를 반환합니다.
-    func compareComponent(_ component : CalendarComponent) -> TimeInterval {
+    public func compareComponent(_ component : CalendarComponent) -> TimeInterval {
         guard let selfDate = self.component.date else { return 0 }
         guard let compareDate = component.component.date else { return 0 }
         return selfDate.timeIntervalSince(compareDate)
