@@ -73,23 +73,23 @@ extension CalendarComponent {
     
 }
 
-struct MonthDayComponent : Identifiable {
+public struct MonthDayComponent : Identifiable {
     var index : Int
-    var isCurrentMonth : Bool
-    var data : CalendarComponent
+    public var isCurrentMonth : Bool
+    public var data : CalendarComponent
     var id : Int {
         index
     }
 }
 
-struct YearMonthComponent : Identifiable, Hashable {
+public struct YearMonthComponent : Identifiable, Hashable {
     
     static func == (lhs: YearMonthComponent, rhs: YearMonthComponent) -> Bool {
         lhs.index == rhs.index
     }
     
     var index : Int
-    var data : CalendarComponent
+    public var data : CalendarComponent
     var id : Int {
         index
     }
