@@ -23,11 +23,11 @@ public struct CalendarComponent {
     }
     
     /// 0 : 일 , 1 : 월 , 2 : 화 , 3 :  수, 4 : 목 , 5 : 금 , 6: 토
-    var startWeek : Int {
+    public var startWeek : Int {
         return date.weekday
     }
     
-    var lastWeek : Int {
+    public var lastWeek : Int {
         guard let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: date)
                 else { return 1 }
         guard let lastDate = Calendar.current.date(byAdding: .day, value: -1, to: nextMonth)
@@ -35,7 +35,7 @@ public struct CalendarComponent {
         return lastDate.weekday
     }
     
-    var endDay : Int {
+    public var endDay : Int {
         guard let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: date)
                 else { return 1 }
         guard let lastDate = Calendar.current.date(byAdding: .day, value: -1, to: nextMonth)
@@ -74,27 +74,27 @@ extension CalendarComponent {
 }
 
 public struct MonthDayComponent : Identifiable {
-    var index : Int
+    public var index : Int
     public var isCurrentMonth : Bool
     public var data : CalendarComponent
-    var id : Int {
+    public var id : Int {
         index
     }
 }
 
 public struct YearMonthComponent : Identifiable, Hashable {
     
-    static func == (lhs: YearMonthComponent, rhs: YearMonthComponent) -> Bool {
+    public static func == (lhs: YearMonthComponent, rhs: YearMonthComponent) -> Bool {
         lhs.index == rhs.index
     }
     
-    var index : Int
+    public var index : Int
     public var data : CalendarComponent
-    var id : Int {
+    public var id : Int {
         index
     }
     
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(index)
     }
 }
