@@ -68,15 +68,15 @@ public class CalendarManger : ObservableObject {
     
     /// 현재 날짜로 페이지를 되돌립니다.
     public func resetPage() {
-        let index = getComponentIndex()
+        let index = getComponentIndex(pointComponent: selectedComponent)
         currentPage = YearMonthComponent(index: index,
-                                         data: CalendarComponent(year: point.year,
-                                                                 month: point.month,
+                                         data: CalendarComponent(year: selectedComponent.year,
+                                                                 month: selectedComponent.month,
                                                                  day: 1))
         
-        selectedComponent = CalendarComponent(year: point.year,
-                                              month: point.month,
-                                              day: point.day)
+        selectedComponent = CalendarComponent(year: selectedComponent.year,
+                                              month: selectedComponent.month,
+                                              day: selectedComponent.day)
     }
     
 }
@@ -136,13 +136,13 @@ extension CalendarManger {
         return components
     }
     
-    func getComponentIndex() -> Int {
+    func getComponentIndex(pointComponent : CalendarComponent) -> Int {
         var index = 0
         
-        for year in startComponent.year ..< point.year + 1 {
+        for year in startComponent.year ..< pointComponent.year + 1 {
             if year == startComponent.year {
                 if year == point.year {
-                    for _ in startComponent.month ..< point.month + 1 {
+                    for _ in startComponent.month ..< pointComponent.month + 1 {
                         index += 1
                     }
                 } else {
@@ -150,8 +150,8 @@ extension CalendarManger {
                         index += 1
                     }
                 }
-            } else if year == point.year {
-                for _ in 1 ..< point.month + 1 {
+            } else if year == pointComponent.year {
+                for _ in 1 ..< pointComponent.month + 1 {
                     index += 1
                 }
             } else {
