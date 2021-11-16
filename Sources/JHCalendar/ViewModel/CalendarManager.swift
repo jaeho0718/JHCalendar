@@ -21,6 +21,8 @@ public class CalendarManger : ObservableObject {
     
     /// 캘린더의 마지막 날짜 컴포넌트
     var endComponent : CalendarComponent
+    
+    var point : CalendarComponent
 
     /// 캘린더의 데이터를 관리하는 Viewmodel 입니다.
     /// - Parameter start : 캘린더의 시작 컴포넌트
@@ -33,7 +35,7 @@ public class CalendarManger : ObservableObject {
         self.startComponent = start
         self.endComponent = end
         self.selectedComponent = point
-        
+        self.point = point
         var index = 0
         
         for year in startComponent.year ..< point.year + 1 {
@@ -66,16 +68,15 @@ public class CalendarManger : ObservableObject {
     
     /// 현재 날짜로 페이지를 되돌립니다.
     public func resetPage() {
-        let current = Date()
-        let index = getComponentIndex(componentYear: current.year, componentMonth: current.month)
+        let index = getComponentIndex()
         currentPage = YearMonthComponent(index: index,
-                                         data: CalendarComponent(year: current.year,
-                                                                 month: current.month,
+                                         data: CalendarComponent(year: point.year,
+                                                                 month: point.month,
                                                                  day: 1))
         
-        selectedComponent = CalendarComponent(year: current.year,
-                                              month: current.month,
-                                              day: current.day)
+        selectedComponent = CalendarComponent(year: point.year,
+                                              month: point.month,
+                                              day: point.day)
     }
     
 }
@@ -135,13 +136,13 @@ extension CalendarManger {
         return components
     }
     
-    func getComponentIndex(componentYear : Int, componentMonth : Int) -> Int {
+    func getComponentIndex() -> Int {
         var index = 0
         
-        for year in startComponent.year ..< componentYear + 1 {
+        for year in startComponent.year ..< point.year + 1 {
             if year == startComponent.year {
-                if year == componentYear {
-                    for _ in startComponent.month ..< componentMonth + 1 {
+                if year == point.year {
+                    for _ in startComponent.month ..< point.month + 1 {
                         index += 1
                     }
                 } else {
@@ -149,8 +150,8 @@ extension CalendarManger {
                         index += 1
                     }
                 }
-            } else if year == componentYear {
-                for _ in 1 ..< componentMonth + 1 {
+            } else if year == point.year {
+                for _ in 1 ..< point.month + 1 {
                     index += 1
                 }
             } else {
