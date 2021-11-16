@@ -73,10 +73,6 @@ public class CalendarManger : ObservableObject {
                                          data: CalendarComponent(year: selectedComponent.year,
                                                                  month: selectedComponent.month,
                                                                  day: 1))
-        
-        selectedComponent = CalendarComponent(year: selectedComponent.year,
-                                              month: selectedComponent.month,
-                                              day: selectedComponent.day)
     }
     
 }
@@ -141,7 +137,7 @@ extension CalendarManger {
         
         for year in startComponent.year ..< pointComponent.year + 1 {
             if year == startComponent.year {
-                if year == point.year {
+                if year == pointComponent.year {
                     for _ in startComponent.month ..< pointComponent.month + 1 {
                         index += 1
                     }
