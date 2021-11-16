@@ -69,7 +69,7 @@ public class CalendarManger : ObservableObject {
     /// 현재 날짜로 페이지를 되돌립니다.
     public func resetPage() {
         let index = getComponentIndex(pointComponent: selectedComponent)
-        currentPage = YearMonthComponent(index: index,
+        currentPage = YearMonthComponent(index: index - 1,
                                          data: CalendarComponent(year: selectedComponent.year,
                                                                  month: selectedComponent.month,
                                                                  day: 1))
