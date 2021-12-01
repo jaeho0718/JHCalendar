@@ -25,7 +25,7 @@ public struct DefaultCalendarDayView: View {
         }){
             Text(String(component.day))
                 .fontWeight(isEqual() ? .semibold : .medium)
-                .frame(width:calendarHeight,height: calendarHeight,alignment: .top)
+                .frame(width:calendarHeight,height: calendarHeight,alignment: .center)
                 .foregroundColor(isEqual() ? .red : .accentColor)
         }
         .buttonStyle(.plain)
