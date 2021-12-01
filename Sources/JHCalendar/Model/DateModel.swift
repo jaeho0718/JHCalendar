@@ -26,14 +26,14 @@ extension Date {
         Calendar.current.component(.weekday, from: self)
     }
     
-    /// 현재로부터 2년 전 Date값
-    var twoYearLater : Date {
-        Calendar.current.date(byAdding: .year, value: 2, to: self) ?? Date()
+    /// 현재로부터 4년 전 Date값
+    var fourYearLater : Date {
+        Calendar.current.date(byAdding: .year, value: 4, to: self) ?? Date()
     }
     
-    /// 현재로부터 2년 후 Date값
-    var twoYearBefore : Date {
-        Calendar.current.date(byAdding: .year, value: -2, to: self) ?? Date()
+    /// 현재로부터 4년 후 Date값
+    var fourYearBefore : Date {
+        Calendar.current.date(byAdding: .year, value: -4, to: self) ?? Date()
     }
     
 }
