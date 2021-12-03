@@ -22,7 +22,7 @@ public struct CalendarComponent {
         return result
     }
     
-    /// 0 : 일 , 1 : 월 , 2 : 화 , 3 :  수, 4 : 목 , 5 : 금 , 6: 토
+    /// 1 : Sunday , 2 : Monday , 3 : Tuesday , 4 :  Wednesday, 5 : Thursday , 6 : Friday , 7: Saturday
     public var startWeek : Int {
         return date.weekday
     }
@@ -47,17 +47,17 @@ public struct CalendarComponent {
 
 extension CalendarComponent {
     
-    /// 현재 날짜로부터 4년전까지 시간
+    /// 4 year befor.
     public static let startDefault : CalendarComponent = .init(year: Date().fourYearBefore.year,
                                                         month: Date().fourYearBefore.month,
                                                         day: Date().fourYearBefore.day)
     
-    /// 현재 날짜로부터 4년후까지 시간
+    /// 4 year later
     public static let endDefault : CalendarComponent = .init(year: Date().fourYearLater.year,
                                                         month: Date().fourYearLater.month,
                                                         day: Date().fourYearLater.day)
     
-    /// 현재 날짜
+    /// current
     public static let currentDefault : CalendarComponent = .init(year: Date().year,
                                                           month: Date().month,
                                                           day: Date().day)
@@ -65,7 +65,7 @@ extension CalendarComponent {
 
 extension CalendarComponent {
     
-    /// 입력받은 컴포넌트와 비교하여 작으면 음수, 같으면 0, 크면 양수를 반환합니다.
+    /// Compare components. 
     public func compareComponent(_ component : CalendarComponent) -> TimeInterval {
         guard let selfDate = self.component.date else { return 0 }
         guard let compareDate = component.component.date else { return 0 }

@@ -2,11 +2,24 @@
 
 SwiftUI Customizable Calendar Library
 
+![Version badge](https://img.shields.io/badge/version-1.2.0-green.svg)
+![License](https://img.shields.io/github/license/jaeho0718/JHCalendar)
+
 ## Overview
 
-SwiftUI에서 사용할 수 있는 커스텀 가능한 캘린더 라이브러리입니다.
+Customizable Calendar Library.
 
-## 기본 사용
+![Example view](./Resources/example.gif)
+
+## Download
+
+Use swift package manager.
+
+https://github.com/jaeho0718/JHCalendar > Exact Version 1.2.0
+
+## Basic
+
+Check Sources/JHCalendar/ExampleView.swift
 
 ```swift
     import SwiftUI
@@ -26,23 +39,21 @@ SwiftUI에서 사용할 수 있는 커스텀 가능한 캘린더 라이브러리
     }
 ```
 
-## 가이드라인
+## Guidline
 
-- CalendarManager 선언하기
+- Declare CalendarManager
 
-    - CalendarManager는 캘린더의 데이터를 관리하는 ObservableObject를 채택한 클래스입니다. (**필수**)
+    - To use JHCalendar,CalendarManager sould be declared. (**Important**)
     
     ```swift
-        CalendarManger(start: .startDefault, end: .endDefault, point: .currentDefault)
+        CalendarManger(mode : .Month,start: .startDefault, end: .endDefault, point: .currentDefault)
     ```
-    
-    - start : 캘린더의 첫 페이지 (startDefault는 현재날짜를 기준으로부터 2년 전을 첫 페이지로 합니다.)
-    - end : 캘린더의 마지막 페이지 (endDefault는 현재날짜를 기준으로부터 2년 후를 마지막 페이지로 합니다.)
-    - point : 캘린더 시작 위치 (currentDefault는 현재날짜를 캘린더 시작위치로 합니다.)
+    - mode : Calendar mode (Month/Week)
+    - start : Calendar start page
+    - end : Calendar end page
+    - point : Calendar start date
 
-- JHCalendar 선언하기
-
-    - 캘린더뷰입니다.
+- Declare JHCalendar
 
     ```swift
         JHCalendar(content: { component in 
@@ -50,9 +61,9 @@ SwiftUI에서 사용할 수 있는 커스텀 가능한 캘린더 라이브러리
         })
     ```
 
-    - content : 캘린더의 요일을 표시하는데 쓰일 뷰입니다. (사전정의된 DefaultCalendarDayView를 이용할 수 있습니다.)
+    - content : The view that will be used to display the days of the week in the calendar. (you can use DefaultCalendarDayView)
 
-    - component : 표시될 요일에 대한 구체적인 정보가 담긴 구조체입니다.
+    - component : A structure containing specific information about the days of the week to be displayed.
 
         ```swift
             struct CalendarComponent {
@@ -64,25 +75,25 @@ SwiftUI에서 사용할 수 있는 커스텀 가능한 캘린더 라이브러리
 
 - EnvironmentKey
 
-    - 캘린더의 세팅값을 변경할 수 있는 EnvironmentKey 입니다.
+    - EnvironmentKey that can change the settings of the calendar.
 
     ```swift
         JHCalendar(content: { component in 
             DefaultCalendarDayView(component: component)
         })
         .environment(\.calendarHeight, 60)
-        .environment(\.calendarWeekSymbols, ["월요일","화요일","수요일","목요일","금요일","토요일","일요일"])
+        .environment(\.calendarWeekSymbols, Calendar.current.veryShortWeekdaySymbols)
         .environment(\.calendarShowTitle, true)
         .environment(\.calendarWeekFont, .callout)
         .environment(\.calendarWeekColor, .secondary)
     ```
 
-    - calendarHeight : 캘린더 요일셀의 기본 높이입니다. 기본값은 50 입니다.
+    - calendarHeight : The default height of the calendar day cell. The default is 50.
     
-    - calendarWeekSymbols : 캘린더의 주일을 나타내는 심볼입니다. 기본적으로 지역화된 요일값이 들어갑니다.
+    - calendarWeekSymbols : A symbol representing the week of the calendar. By default, localized day values ​​are displyed.
 
-    - calendarShowTitle : 캘린더의 년/월 타이틀 표시여부
+    - calendarShowTitle : Whether the calendar year/month title is displayed.
 
-    - calendarWeekFont : 캘린더의 표시된 주일 폰트
+    - calendarWeekFont : Calendar weekday font.
 
-    - calendarWeekColor : 캘린더에 표시된 주일 색상
+    - calendarWeekColor : Calendar weekday font color.

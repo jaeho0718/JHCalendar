@@ -1,25 +1,21 @@
 import SwiftUI
 
-/// JHCalendar뷰
+/// JHCalendar
 public struct JHCalendar<DayContent : View>: View {
     @Environment(\.calendarHeight) var calendarHeight
     @Environment(\.calendarShowTitle) var showTitle
     
     @EnvironmentObject var manager : CalendarManger
     
-    @Namespace var transition
-    
     var content : ((CalendarComponent) -> DayContent)
     
     var weekbarHeight : CGFloat
     var titleHeight : CGFloat
     
-    /// JHCalendar뷰
-    /// - Parameter titleHeight : 캘린더타이틀의 높이
-    /// - Parameter weekbarHeight : 주일뷰의 높이
-    /// - Parameter content : 날짜를 나타낼 뷰입니다.
-    /// CalendarComponent를 뷰에 전달합니다.
-    /// 기본으로 사용하고 싶으면 DefaultCalendarDayView를 사용하세요.
+    /// JHCalendar
+    /// - Parameter titleHeight : Calendar title height.
+    /// - Parameter weekbarHeight : Claendar weekday bar height.
+    /// - Parameter content : Custom Day view. If you don't want to customize Day view, use DefaultCalendarDayView.
     public init(titleHeight : CGFloat = 45,weekbarHeight : CGFloat = 40,@ViewBuilder content : @escaping (CalendarComponent) -> DayContent ){
         self.content = content
         self.weekbarHeight = weekbarHeight

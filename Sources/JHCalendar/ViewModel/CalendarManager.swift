@@ -10,10 +10,10 @@ import SwiftUI
 /// 캘린더의 데이터를 관리하는 Viewmodel 입니다.
 public class CalendarManger : ObservableObject {
     
-    /// 현재 페이지의 년,월 정보입니다.
+    /// Calendar current pageInfo. this value is automatically updated.
     @Published public var currentPage : PageComponent
     
-    /// 사용자가 선택한 날짜의 컴포넌트 정보입니다.
+    /// selected Date. If you use custom view, selectedComponent was not automatically updated.
     @Published public var selectedComponent : CalendarComponent
     
     @Published public var calendarMode : CalendarMode = .Month {
@@ -22,22 +22,23 @@ public class CalendarManger : ObservableObject {
         }
     }
     
-    /// 캘린더의 시작 날짜 컴포넌트
+    /// Calendar start point
     var startComponent : CalendarComponent
     
-    /// 캘린더의 마지막 날짜 컴포넌트
+    /// Calendar end point
     var endComponent : CalendarComponent
     
     var point : CalendarComponent
 
-    /// 캘린더의 데이터를 관리하는 Viewmodel 입니다.
-    /// - Parameter start : 캘린더의 시작 컴포넌트
-    /// - Parameter end : 캘린더의 마지막 컴포넌트
-    /// - Parameter point : 캘린더의 초기 선택될 날짜 값
-    public init(start : CalendarComponent = .startDefault,
+    /// CalendarManager that control calendar start,end page and mode.
+    /// - Parameter mode : Calendar mode. (Week/Month)
+    /// - Parameter start : Calendar start point
+    /// - Parameter end : Calendar end point
+    /// - Parameter point : Date value to be initially selected in calendar
+    public init(mode : CalendarMode = .Month ,start : CalendarComponent = .startDefault,
          end : CalendarComponent = .endDefault,
          point : CalendarComponent = .currentDefault) {
-        
+        self.calendarMode = mode
         self.startComponent = start
         self.endComponent = end
         self.selectedComponent = point
@@ -46,7 +47,8 @@ public class CalendarManger : ObservableObject {
         
     }
     
-    /// 지정된 날짜로 페이지를 되돌립니다.
+    /// Reset calendar page to resetDate.
+    /// - Parameter resetDate : CalendarComponent that you want to set.
     public func resetPage(resetDate : CalendarComponent ) {
         selectedComponent = resetDate
         currentPage = PageComponent(year: resetDate.year, month: resetDate.month, day: 1)
