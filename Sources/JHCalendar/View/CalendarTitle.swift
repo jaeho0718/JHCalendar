@@ -13,8 +13,8 @@ struct CalendarTitle: View {
     
     var body: some View {
         HStack{
-            Text(String(manager.currentPage.data.year))
-            Text("\( Calendar.current.monthSymbols[manager.currentPage.data.month - 1])")
+            Text(String(manager.currentPage.year))
+            Text("\( Calendar.current.monthSymbols[manager.currentPage.month - 1])")
         }.font(.title3.weight(.semibold))
     }
     

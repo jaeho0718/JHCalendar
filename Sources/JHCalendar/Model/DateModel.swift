@@ -21,7 +21,7 @@ extension Date {
         Calendar.current.component(.day, from: self)
     }
     
-    /// 0 : 일 , 1 : 월 , 2 : 화 , 3 :  수, 4 : 목 , 5 : 금 , 6: 토
+    /// 1 : 일 , 2 : 월 , 3 : 화 , 4 :  수, 5 : 목 , 6 : 금 , 7: 토
     var weekday : Int {
         Calendar.current.component(.weekday, from: self)
     }

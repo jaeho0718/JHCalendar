@@ -7,6 +7,8 @@ public struct JHCalendar<DayContent : View>: View {
     
     @EnvironmentObject var manager : CalendarManger
     
+    @Namespace var transition
+    
     var content : ((CalendarComponent) -> DayContent)
     
     var weekbarHeight : CGFloat
@@ -31,14 +33,26 @@ public struct JHCalendar<DayContent : View>: View {
                     .frame(height:titleHeight)
             }
             WeekBar().frame(height:weekbarHeight)
-            TabView(selection: $manager.currentPage ){
-                ForEach(manager.generateMonthComponents()){ component in
-                    JHMonthView(page: component.data, content: { day in
-                        content(day)
-                    }).tag(component)
+            if manager.calendarMode == .Month {
+                TabView(selection: $manager.currentPage){
+                    ForEach(manager.generateMonthComponents()){ component in
+                        JHMonthView(page: component.data, content: { day in
+                            content(day)
+                        }).tag(component.tag)
+                    }
+                }.tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: calendarHeight * 6)
+            } else {
+                TabView(selection: $manager.currentPage){
+                    ForEach(manager.generateWeekComponents()){ component in
+                        JHWeekView(data: component){ day in
+                            content(day)
+                        }.tag(component.tag)
+                    }
                 }
-            }.tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: calendarHeight * 6)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: calendarHeight)
+            }
         }
     }
 }

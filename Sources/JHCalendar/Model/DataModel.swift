@@ -83,19 +83,50 @@ public struct MonthDayComponent : Identifiable {
     }
 }
 
-public struct YearMonthComponent : Identifiable, Hashable {
-    
-    public static func == (lhs: YearMonthComponent, rhs: YearMonthComponent) -> Bool {
-        lhs.index == rhs.index
-    }
-    
+public struct YearMonthComponent : Identifiable {
     public var index : Int
+    public var data : CalendarComponent
+    public var tag : PageComponent
+    public var id : Int {
+        index
+    }
+}
+
+public struct WeekComponent : Identifiable {
+    public var index : Int
+    public var data : [WeekDayComponent]
+    public var tag : PageComponent
+    public var id : Int {
+        index
+    }
+}
+
+public struct WeekDayComponent : Identifiable {
+    public var index : Int
+    public var isCurrentMonth : Bool
     public var data : CalendarComponent
     public var id : Int {
         index
     }
+}
+
+public struct PageComponent : Hashable {
+    
+    public var year : Int
+    public var month : Int
+    public var day : Int
+    
+    public static func == (lhs: PageComponent, rhs: PageComponent) -> Bool {
+        return lhs.year == rhs.year && lhs.month == rhs.month && lhs.day == rhs.day
+    }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(index)
+        hasher.combine(year)
+        hasher.combine(month)
+        hasher.combine(day)
     }
+}
+
+public enum CalendarMode {
+    case Month,Week
 }
