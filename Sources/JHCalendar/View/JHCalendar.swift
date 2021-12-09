@@ -37,7 +37,8 @@ public struct JHCalendar<DayContent : View>: View {
                         }).tag(component.tag)
                     }
                 }.tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: calendarHeight * 6)
+                    .frame(height: calendarHeight * 6)
+                    .transition(AnyTransition.identity)
             } else {
                 TabView(selection: $manager.currentPage){
                     ForEach(manager.generateWeekComponents()){ component in
@@ -46,6 +47,7 @@ public struct JHCalendar<DayContent : View>: View {
                         }.tag(component.tag)
                     }
                 }
+                .transition(AnyTransition.identity)
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(height: calendarHeight)
             }
