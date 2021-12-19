@@ -1,65 +1,138 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Lee Jaeho on 2021/12/18.
+//
+
 import SwiftUI
 
-/// JHCalendar
-public struct JHCalendar<DayContent : View>: View {
-    @Environment(\.calendarHeight) var calendarHeight
-    @Environment(\.calendarShowTitle) var showTitle
+public struct JHCalendar<Content : View> : View {
     
-    @EnvironmentObject var manager : CalendarManger
+    @EnvironmentObject var manager : CalendarManager
+    @Namespace var transitionID
+    private var cellHeight : CGFloat
+    private var content : (CalendarComponents) -> Content
+    #if os(iOS)
+    var displayMode : CalendarDisplayMode = .page
+    #else
+    let displayMode : CalendarDisplayMode = .scroll
+    #endif
+    var customWeekdaySymbols = [String]()
+    var weekdaySymbolType : CalendarSymbolType = .short
+    var weekdayBarColor : Color = .primary
+    var dayPrimaryColor : Color = .primary
+    var daySecondaryColor : Color = .secondary
+    var weekdayFont : Font? = nil
+    var showTitle : Bool = true
+    var showWeekBar : Bool = true
     
-    var content : ((CalendarComponent) -> DayContent)
-    
-    var weekbarHeight : CGFloat
-    var titleHeight : CGFloat
-    
-    /// JHCalendar
-    /// - Parameter titleHeight : Calendar title height.
-    /// - Parameter weekbarHeight : Claendar weekday bar height.
-    /// - Parameter content : Custom Day view. If you don't want to customize Day view, use DefaultCalendarDayView.
-    public init(titleHeight : CGFloat = 45,weekbarHeight : CGFloat = 40,@ViewBuilder content : @escaping (CalendarComponent) -> DayContent ){
+    public init(cellHeight : CGFloat = 50,
+                @ViewBuilder content : @escaping (CalendarComponents) -> Content) {
+        self.cellHeight = cellHeight
         self.content = content
-        self.weekbarHeight = weekbarHeight
-        self.titleHeight = titleHeight
+    }
+    
+    #if os(iOS)
+    var pageMode : some View {
+        Group{
+            switch manager.mode {
+            case .Month :
+                TabView(selection: $manager.page.monthPage){
+                    ForEach(manager.monthComponents){ month in
+                        MonthView(displayMode: .page, month: month.component,
+                                  height: cellHeight,
+                                  dayPrimaryColor: dayPrimaryColor,
+                                  daySecondaryColor: daySecondaryColor,
+                                  content: { comp in
+                            content(comp)
+                        })
+                        .tag(month.component)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .matchedGeometryEffect(id: "View", in: transitionID,anchor: .top)
+            case .Week :
+                TabView(selection:$manager.page.weekPage){
+                    ForEach(manager.weekComponents) { week in
+                        WeekView(week: week.component,
+                                 height: cellHeight,
+                                 dayPrimaryColor: dayPrimaryColor,
+                                 daySecondaryColor: daySecondaryColor,
+                                 content: { comp in
+                            content(comp)
+                        })
+                        .tag(week.component)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .matchedGeometryEffect(id: "View", in: transitionID,anchor: .top)
+            }
+        }
+        .frame(height:manager.mode == .Month ? cellHeight * 6 : cellHeight,alignment: .top)
+    }
+    #endif
+    
+    var scrollMode : some View {
+        ScrollViewReader{ proxy in
+            ScrollView(.vertical,showsIndicators: false){
+                LazyVStack{
+                    ForEach(manager.monthComponents){ month in
+                        VStack{
+                            MonthView(displayMode: .scroll,
+                                      month: month.component,
+                                      height: cellHeight,
+                                      dayPrimaryColor: dayPrimaryColor,
+                                      daySecondaryColor: daySecondaryColor,
+                                      content: { comp in
+                                content(comp)
+                            })
+                            Divider()
+                        }.id(month.component)
+                    }
+                }
+            }
+            .coordinateSpace(name: "ScrollView")
+            .onAppear{
+                proxy.scrollTo(manager.page.monthPage, anchor: .top)
+            }
+        }
+        
     }
     
     public var body: some View {
         VStack(spacing:0){
             if showTitle {
-                CalendarTitle()
-                    .frame(height:titleHeight)
+                CalendarTitle(comp: manager.page.current)
+                    .padding(.bottom)
             }
-            WeekBar().frame(height:weekbarHeight)
-            if manager.calendarMode == .Month {
-                TabView(selection: $manager.currentPage){
-                    ForEach(manager.generateMonthComponents()){ component in
-                        JHMonthView(page: component.data, content: { day in
-                            content(day)
-                        }).tag(component.tag)
-                    }
-                }.tabViewStyle(.page(indexDisplayMode: .never))
-                    .frame(height: calendarHeight * 6)
-                    .transition(AnyTransition.identity)
-            } else {
-                TabView(selection: $manager.currentPage){
-                    ForEach(manager.generateWeekComponents()){ component in
-                        JHWeekView(data: component){ day in
-                            content(day)
-                        }.tag(component.tag)
-                    }
-                }
-                .transition(AnyTransition.identity)
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: calendarHeight)
+            if showWeekBar {
+                JHWeekBar(weeks: customWeekdaySymbols,
+                        symbolType: weekdaySymbolType,
+                        font: weekdayFont)
+                    .foregroundColor(weekdayBarColor)
             }
+            
+            #if os(iOS)
+            switch displayMode {
+            case .page:
+                pageMode
+            case .scroll:
+                scrollMode
+            }
+            #else
+            scrollMode
+            #endif
         }
     }
 }
 
 struct JHCalendar_Previews: PreviewProvider {
     static var previews: some View {
-        JHCalendar(weekbarHeight:40,content: {
-            DefaultCalendarDayView(component: $0)
-        })
-        .environmentObject(CalendarManger(start: .startDefault, end: .endDefault, point: .currentDefault))
+        JHCalendar{ comp in
+            DefaultCalendarCell(component: comp)
+        }
+        .calendarDisplayMode(mode: .scroll)
+        .environmentObject(CalendarManager())
     }
 }
