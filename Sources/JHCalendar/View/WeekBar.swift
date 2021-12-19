@@ -1,35 +1,46 @@
 //
-//  File.swift
+//  SwiftUIView.swift
 //  
 //
-//  Created by Lee Jaeho on 2021/11/13.
+//  Created by Lee Jaeho on 2021/12/19.
 //
+
 import SwiftUI
 
-struct WeekBar: View {
-    @Environment(\.calendarWeekFont) var weekdayFont
-    @Environment(\.calendarWeekSymbols) var weekdaySymbols
-    @Environment(\.calendarWeekColor) var weekdayColor
+public struct JHWeekBar : View {
     
-    var body: some View {
-        HStack{
-            if weekdaySymbols.count != 7 {
-                ForEach(Calendar.current.shortWeekdaySymbols, id : \.self){ symbol in
-                    Text(symbol).frame(maxWidth:.infinity)
-                        .font(weekdayFont).foregroundColor(weekdayColor)
-                }
-            } else {
-                ForEach(weekdaySymbols, id : \.self){ symbol in
-                    Text(symbol).frame(maxWidth:.infinity)
-                        .font(weekdayFont).foregroundColor(weekdayColor)
+    var weeks = [String]()
+    var symbolType : CalendarSymbolType = .short
+    var font : Font? = nil
+    
+    public var body: some View {
+        HStack(spacing:0){
+            Group{
+                if weeks.count == 7 {
+                    ForEach(weeks,id:\.self) { week in
+                        Text(week)
+                    }
+                } else {
+                    switch symbolType {
+                    case .veryshort:
+                        ForEach(Calendar.current.veryShortWeekdaySymbols,id : \.self) { week in
+                            Text(week)
+                        }
+                    case .short:
+                        ForEach(Calendar.current.shortWeekdaySymbols,id : \.self) { week in
+                            Text(week)
+                        }
+                    }
                 }
             }
+            .frame(maxWidth:.infinity)
+            .font(font)
         }
     }
 }
 
 struct WeekBar_Previews: PreviewProvider {
     static var previews: some View {
-        WeekBar()
+        JHWeekBar()
     }
 }

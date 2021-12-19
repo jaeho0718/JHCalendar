@@ -5,208 +5,115 @@
 //  Created by Lee Jaeho on 2021/11/13.
 //
 
-import SwiftUI
+import Foundation
 
-/// 캘린더의 데이터를 관리하는 Viewmodel 입니다.
-public class CalendarManger : ObservableObject {
+public class CalendarManager : ObservableObject {
     
-    /// Calendar current pageInfo. this value is automatically updated.
-    @Published public var currentPage : PageComponent
-    
-    /// selected Date. If you use custom view, selectedComponent was not automatically updated.
-    @Published public var selectedComponent : CalendarComponent
-    
-    @Published public var calendarMode : CalendarMode = .Month {
+    @Published var mode : CalendarMode {
         willSet(newValue){
-            setPage(newValue: newValue)
+            changeMode(newValue: newValue)
         }
     }
+    @Published var page : CalendarPage
+    @Published var selectedComponent : CalendarComponents
     
-    /// Calendar start point
-    var startComponent : CalendarComponent
+    let weekComponents : [DayComponent]
+    let monthComponents : [DayComponent]
+    let startDate : CalendarComponents
+    let endDate : CalendarComponents
     
-    /// Calendar end point
-    var endComponent : CalendarComponent
-    
-    var point : CalendarComponent
-
-    /// CalendarManager that control calendar start,end page and mode.
-    /// - Parameter mode : Calendar mode. (Week/Month)
-    /// - Parameter start : Calendar start point
-    /// - Parameter end : Calendar end point
-    /// - Parameter point : Date value to be initially selected in calendar
-    public init(mode : CalendarMode = .Month ,start : CalendarComponent = .startDefault,
-         end : CalendarComponent = .endDefault,
-         point : CalendarComponent = .currentDefault) {
-        self.calendarMode = mode
-        self.startComponent = start
-        self.endComponent = end
-        self.selectedComponent = point
-        self.point = point
-        self.currentPage = PageComponent(year: point.year, month: point.month, day: 1)
+    public init(mode : CalendarMode = .Month,
+                startDate : CalendarComponents = .startDefault,
+                endDate : CalendarComponents = .endDefault,
+                startPoint : CalendarComponents = .current) {
+        var comps = [DayComponent]()
         
-    }
-    
-    /// Reset calendar page to resetDate.
-    /// - Parameter resetDate : CalendarComponent that you want to set.
-    public func resetPage(resetDate : CalendarComponent ) {
-        selectedComponent = resetDate
-        currentPage = PageComponent(year: resetDate.year, month: resetDate.month, day: 1)
-    }
-    
-}
-
-extension CalendarManger {
-    
-    /// 현재 달의 날짜 컴포넌트를 생성합니다.
-    func generateDayComponents(page : CalendarComponent) -> [MonthDayComponent] {
-        var components = [MonthDayComponent]()
-        if page.startWeek != 0 {
-            guard let lastMonth = Calendar.current.date(byAdding: .day , value: -1, to: page.date)
-                else {return components}
-            for week in 1 ..< page.startWeek {
-                components.append(MonthDayComponent(index: components.count, isCurrentMonth: false,
-                                                    data: CalendarComponent(year: lastMonth.year, month: lastMonth.month, day: lastMonth.day - page.startWeek + week + 1)))
+        for comp in startDate ..< endDate {
+            if comp.date.weekday == 7 {
+                //saturday
+                comps.append(DayComponent(id: comps.count,
+                                          component: comp))
             }
         }
         
-        for day in 0 ..< page.endDay {
-            components.append(MonthDayComponent(index: components.count, isCurrentMonth: true,
-                                                data: CalendarComponent(year: page.year, month: page.month, day: day + 1)))
-        }
-        
-        if components.count < 42 {
-            guard let nextMonth = Calendar.current.date(byAdding: .month , value: +1, to: page.date)
-                else {return components}
-            for day in 0 ..< 42 - components.count {
-                components.append(MonthDayComponent(index: components.count, isCurrentMonth: false,
-                                                    data: CalendarComponent(year: nextMonth.year , month: nextMonth.month, day: nextMonth.day + day)))
+        var monthComps = [DayComponent]()
+        for comp in comps {
+            if !monthComps.contains(where: {$0.component.year == comp.component.year
+                && $0.component.month == comp.component.month}) {
+                monthComps.append(comp)
             }
         }
         
-        return components
+        var pg = CalendarPage(monthPage: startPoint, weekPage: startPoint, mode: mode)
+        
+        if let monthPage = monthComps.first(where: {$0.component.year == startPoint.year
+            && $0.component.month == startPoint.month}) ,mode == .Month{
+            pg.monthPage = monthPage.component
+        } else if mode == .Week {
+            let cWeek = startPoint.date.weekday
+            let cDate = Calendar.current.date(byAdding: .day,
+                                              value: 7-cWeek,
+                                              to: startPoint.date) ?? Date()
+            pg.weekPage = CalendarComponents(year: cDate.year, month: cDate.month, day: cDate.day)
+        }
+        
+        self.startDate = startDate
+        self.endDate = endDate
+        self.weekComponents = comps
+        self.monthComponents = monthComps
+        self.selectedComponent = startPoint
+        self.mode = mode
+        self.page = pg
     }
     
-    /// 월과 관련된 컴포넌트를 생성합니다.
-    func generateMonthComponents() -> [YearMonthComponent] {
-        var components = [YearMonthComponent]()
-        for year in startComponent.year ..< endComponent.year + 1 {
-            if year == startComponent.year {
-                for month in startComponent.month ..< 13 {
-                    components.append(YearMonthComponent(index: components.count,
-                                                         data: CalendarComponent(year: year, month: month, day: 1),
-                                                         tag: PageComponent(year: year, month: month, day: 1)))
-                }
-            } else if year == endComponent.year {
-                for month in 1 ..< endComponent.month + 1 {
-                    components.append(YearMonthComponent(index: components.count,
-                                                         data: CalendarComponent(year: year, month: month, day: 1),
-                                                         tag: PageComponent(year: year, month: month, day: 1)))
-                }
+    public func changeMode(mode newValue : CalendarMode? = nil) {
+        if let newValue = newValue {
+            mode = newValue
+        } else {
+            switch mode {
+            case .Week :
+                mode = .Month
+            case .Month :
+                mode = .Week
+            }
+        }
+    }
+    
+    public func setPage(component : CalendarComponents) {
+        switch mode {
+        case .Month:
+            let currentDate = CalendarComponents(year: component.year, month: component.month, day: 1).date
+            let newDate = Calendar.current.date(byAdding: .day, value: 7-currentDate.weekday, to: currentDate) ?? Date()
+            page.monthPage = CalendarComponents(year: newDate.year, month: newDate.month, day: newDate.day)
+        case .Week:
+            let week = component.date.weekday
+            let newDate = Calendar.current.date(byAdding: .day, value: 7-week, to: component.date) ?? Date()
+            page.weekPage = CalendarComponents(year: newDate.year, month: newDate.month, day: newDate.day)
+        }
+    }
+    
+    func changeMode(newValue : CalendarMode) {
+        switch newValue {
+        case .Month:
+            if let newpg = weekComponents.first(where: {$0.component.month == page.weekPage.month
+                && $0.component.year == page.weekPage.year}) {
+                page.monthPage = newpg.component
+            }
+        case .Week:
+            if selectedComponent.year == page.monthPage.year
+                && selectedComponent.month == page.monthPage.month {
+                // same page
+                let slweek = selectedComponent.date.weekday
+                let wkDate = Calendar.current.date(byAdding: .day, value: 7 - slweek,
+                                                   to: selectedComponent.date) ?? Date()
+                page.weekPage = CalendarComponents(year: wkDate.year, month: wkDate.month, day: wkDate.day)
             } else {
-                for month in 1 ..< 13 {
-                    components.append(YearMonthComponent(index: components.count,
-                                                         data:  CalendarComponent(year: year, month: month, day: 1),
-                                                         tag: PageComponent(year: year, month: month, day: 1)))
+                if let newpg = weekComponents.first(where: {$0.component.month == page.monthPage.month
+                    && $0.component.year == page.monthPage.year}) {
+                    page.weekPage = newpg.component
                 }
             }
         }
-        return components
-    }
-    
-    /// 주와 관련된 컴포넌트를 생성합니다.
-    func generateWeekComponents() -> [WeekComponent] {
-        
-        let monthComponents = generateMonthComponents()
-        var temporaryComponent = [WeekDayComponent]()
-        var weekComponents = [WeekComponent]()
-        var temporaryWeek = WeekComponent(index: 0,data: [],
-                                          tag: PageComponent(year: 0, month: 0, day: 0))
-        
-        for month in monthComponents {
-            
-            if month.id == monthComponents.first?.id {
-                
-                guard let lastMonth = Calendar.current.date(byAdding: .day, value: -1,
-                                                            to: month.data.date) else {return []}
-                
-                for week in 0 ..< month.data.startWeek - 1 {
-                    temporaryComponent.append(WeekDayComponent(index: temporaryComponent.count,
-                                                               isCurrentMonth: false,
-                                                               data: CalendarComponent(year: lastMonth.year,
-                                                                                       month: lastMonth.month,
-                                                                                       day: lastMonth.day - month.data.startWeek + week + 1)))
-                }
-            }
-            
-            for day in 0 ..< month.data.endDay {
-                temporaryComponent.append(WeekDayComponent(index: temporaryComponent.count,
-                                                           isCurrentMonth: true,
-                                                           data: CalendarComponent(year: month.data.year,
-                                                                                   month: month.data.month,
-                                                                                   day: day + 1)))
-            }
-            
-            if month.id == monthComponents.last?.id {
-                guard let nextMonth = Calendar.current.date(byAdding: .month, value: +1,
-                                                            to: month.data.date) else {return []}
-                for week in 0 ..< 7 - month.data.lastWeek {
-                    temporaryComponent.append(WeekDayComponent(index: temporaryComponent.count,
-                                                               isCurrentMonth: false,
-                                                               data: CalendarComponent(year: nextMonth.year,
-                                                                                       month: nextMonth.month,
-                                                                                       day: week + 1)))
-                }
-            }
-        }
-        
-        for dayComponent in temporaryComponent {
-            temporaryWeek.data.append(dayComponent)
-            if temporaryWeek.data.count == 7 {
-                temporaryWeek.index = weekComponents.count
-                if temporaryWeek.data.contains(where: {$0.isCurrentMonth && $0.data.day == 1}) {
-                    guard let firstDay = temporaryWeek.data.first(where: {$0.data.day == 1})
-                                                                                    else {return[]}
-                    temporaryWeek.tag = PageComponent(year: firstDay.data.year,
-                                                      month: firstDay.data.month,
-                                                      day: 1)
-                } else {
-                    guard let firstDay = temporaryWeek.data.first else {return []}
-                    temporaryWeek.tag = PageComponent(year: dayComponent.data.year,
-                                                      month: dayComponent.data.month,
-                                                      day: firstDay.data.day)
-                }
-                weekComponents.append(temporaryWeek)
-                temporaryWeek.data.removeAll()
-            }
-        }
-        
-        return weekComponents
-    }
-    
-    /// 캘린더 모드가 month -> week로 변경될 때 페이지를 계산합니다.
-    func setPage(newValue : CalendarMode) {
-        let oldPage = currentPage
-        var component = PageComponent(year: oldPage.year, month: oldPage.month, day: 1)
-        if newValue == .Week {
-            if selectedComponent.year == oldPage.year && selectedComponent.month == oldPage.month {
-                
-                if let newDay = Calendar.current.date(byAdding: .day,
-                                                         value: -(selectedComponent.date.weekday - 1),
-                                                      to: selectedComponent.date) {
-                    if newDay.month == selectedComponent.month && newDay.year == selectedComponent.year {
-                        component.day = newDay.day
-                    }
-                }
-                if let newDay = Calendar.current.date(byAdding: .day, value: 7-selectedComponent.date.weekday, to: selectedComponent.date){
-                    if newDay.month != selectedComponent.month || newDay.year != selectedComponent.year {
-                        component.day = 1
-                        component.year = newDay.year
-                        component.month = newDay.month
-                    }
-                }
-            }
-        }
-        self.currentPage = component
+        page.mode = newValue
     }
 }
