@@ -7,42 +7,45 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct ExampleView: View {
     
-    @StateObject var manager = CalendarManger(mode: .Month, start: .startDefault,
-                                              end: .endDefault, point: .currentDefault)
+    @StateObject var manager = CalendarManager()
     
     var body: some View {
-        VStack{
-            HStack{
-                Button(action:{
-                    manager.resetPage(resetDate: .currentDefault)
-                }){
-                    Text("Reset")
+        NavigationView{
+            VStack(spacing:0){
+                JHWeekBar()
+                JHCalendar(cellHeight:60){ component in
+                    DefaultCalendarCell(component: component)
                 }
+                .showTitle(show: false)
+                .showWeekBar(show: false)
+                .environmentObject(manager)
+                Text("Selected day : \(String(manager.selectedComponent.year)) \(String(manager.selectedComponent.month)) \(String(manager.selectedComponent.day))")
                 Spacer()
-                Button(action:{
-                    withAnimation(.easeInOut){
-                        if manager.calendarMode == .Month {
-                            manager.calendarMode = .Week
-                        } else {
-                            manager.calendarMode = .Month
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar{
+                ToolbarItemGroup(placement:.navigationBarTrailing) {
+                    Button(action:{
+                        withAnimation(.easeInOut(duration: 1)) {
+                            manager.setMode(mode: nil)
                         }
+                    }){
+                        Label("Change Mode", systemImage: manager.mode == .Month ? "arrow.down.forward.and.arrow.up.backward" : "arrow.up.backward.and.arrow.down.forward")
+                            .imageScale(.medium)
+                            .foregroundColor(.red)
                     }
-                }){
-                    Text("Change Mode")
                 }
-            }.padding(.horizontal)
-            JHCalendar(titleHeight: 40, weekbarHeight: 40, content: { component in
-                DefaultCalendarDayView(component: component)
-            }).environmentObject(manager)
-            //set weekday symbols
-            .environment(\.calendarWeekSymbols, Calendar.current.veryShortWeekdaySymbols)
-            
-            Text("Selected day : \(String(manager.selectedComponent.year)) \(String(manager.selectedComponent.month)) \(String(manager.selectedComponent.day))")
-            
-            Spacer()
+                ToolbarItem(placement:.navigationBarLeading) {
+                    Text(Calendar.current.monthSymbols[manager.page.current.month - 1])
+                        .font(.title2)
+                        .fontWeight(.bold)
+                }
+            }
         }
+        .navigationViewStyle(.stack)
     }
 }
 
@@ -51,3 +54,4 @@ struct ExampleView_Previews: PreviewProvider {
         ExampleView()
     }
 }
+#endif

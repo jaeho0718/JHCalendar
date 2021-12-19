@@ -2,20 +2,23 @@
 
 SwiftUI Customizable Calendar Library
 
-![Version badge](https://img.shields.io/badge/version-1.2.0-green.svg)
+![Version badge](https://img.shields.io/badge/version-2.0.0-green.svg)
 ![License](https://img.shields.io/github/license/jaeho0718/JHCalendar)
 
 ## Overview
 
-Customizable Calendar Library.
-
-![Example view](./Resources/example.gif)
+SwiftUI Customizable Calendar Library.
 
 ## Download
 
 Use swift package manager.
 
-https://github.com/jaeho0718/JHCalendar > Exact Version 1.2.0
+https://github.com/jaeho0718/JHCalendar > Exact Version 2.0.0
+
+## ScreenShot
+|WeekdayMode|MonthMode|ScrollDisplayMode|
+|-----------|---------|-----------------|
+|![WeekdayMode](./Resources/WeekView.gif)|![MonthMode](./Resources/MonthView.gif)|![ScrollDisplayMode](./Resources/ScrollView.gif)|
 
 ## Basic
 
@@ -26,44 +29,47 @@ Check Sources/JHCalendar/ExampleView.swift
 
     struct ContentView : View {
 
-        @StateObject var calendarManager = CalendarManger(start: .startDefault, 
-                                                          end: .endDefault, 
-                                                          point: .currentDefault)
+        @StateObject var calendarManager = CalendarManger(mode : .Month,
+                                                          startDate : .startDefault,
+                                                          endDate : .endDefault,
+                                                          startPoint : .current)
 
         var body : some View {
-            JHCalendar(content: { component in 
+            JHCalendar(cellHeight : 50) { comp in 
                 DefaultCalendarDayView(component: component)
-            })
+            }
             .environmentObject(calendarManager)
         }
     }
 ```
 
-## Guidline
+## Usage
 
 - Declare CalendarManager
 
     - To use JHCalendar,CalendarManager sould be declared. (**Important**)
     
     ```swift
-        CalendarManger(mode : .Month,start: .startDefault, end: .endDefault, point: .currentDefault)
+        CalendarManger(mode : .Month,startDate: .startDefault, endDate: .endDefault, startPoint: .currentDefault)
     ```
-    - mode : Calendar mode (Month/Week)
-    - start : Calendar start page
-    - end : Calendar end page
-    - point : Calendar start date
+    - mode : Calendar mode (Month/Week) (In macos,only support Month mode)
+    - startDate : Calendar first date
+    - endDate : Calendar last date
+    - startPoint : Calendar start point when view appears.
+    - you can get page info in CalendarManager.page.current
 
 - Declare JHCalendar
 
     ```swift
-        JHCalendar(content: { component in 
+        JHCalendar(cellHeight : 50) { comp in 
             DefaultCalendarDayView(component: component)
-        })
+        }
+        .environmentObject(calendarManager)
     ```
 
-    - content : The view that will be used to display the days of the week in the calendar. (you can use DefaultCalendarDayView)
+    - content : The view that will be used to display the day content in the calendar. (you can use DefaultCalendarDayView)
 
-    - component : A structure containing specific information about the days of the week to be displayed.
+    - component : A structure containing specific information about the day.
 
         ```swift
             struct CalendarComponent {
@@ -73,27 +79,29 @@ Check Sources/JHCalendar/ExampleView.swift
             }
         ```
 
-- EnvironmentKey
+- Customize Calendar
 
-    - EnvironmentKey that can change the settings of the calendar.
+    - You can customize all components of calendar by using Modifier.
 
     ```swift
         JHCalendar(content: { component in 
             DefaultCalendarDayView(component: component)
         })
-        .environment(\.calendarHeight, 60)
-        .environment(\.calendarWeekSymbols, Calendar.current.veryShortWeekdaySymbols)
-        .environment(\.calendarShowTitle, true)
-        .environment(\.calendarWeekFont, .callout)
-        .environment(\.calendarWeekColor, .secondary)
+        .customWeekdaySymbols(symbols : ["S","M,"T","Wed","T","F","S"])
+        .weekdaySymbolColor(color : .primary)
+        .weekdayFont(font : .caption2)
+        .calendarCellAccentColor(primary : .primary,secondary : .secondary)
+        .showTitle(false)
+        .showWeekBar(true)
+        .calendarDisplayMode(.page)
     ```
-
-    - calendarHeight : The default height of the calendar day cell. The default is 50.
     
-    - calendarWeekSymbols : A symbol representing the week of the calendar. By default, localized day values ​​are displyed.
-
-    - calendarShowTitle : Whether the calendar year/month title is displayed.
-
-    - calendarWeekFont : Calendar weekday font.
-
-    - calendarWeekColor : Calendar weekday font color.
+    |view modifier|content|
+    |-------------|-------|
+    |customWeekdaySymbols|set custom weekday symbol|
+    |weekdaySymbolColor|set weekday color|
+    |weekdayFont|set weekday font|
+    |calendarCellAccentColor|set calendar accent Color.|
+    |showTitle|set title visibility|
+    |showWeekBar|set weekday visivility|
+    |calendarDisplayMode|set calendar displaymode (page/scroll) (only support iOS)|
