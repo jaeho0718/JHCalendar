@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+///Default DayView
+///
+///If you don't want to define CustomDayView, use DefaultCalendarCell view.
 public struct DefaultCalendarCell: View {
     @EnvironmentObject var manager : CalendarManager
     var component : CalendarComponents

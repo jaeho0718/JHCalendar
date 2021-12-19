@@ -7,11 +7,23 @@
 
 import SwiftUI
 
+///Calendar Week Bar
 public struct JHWeekBar : View {
     
-    var weeks = [String]()
-    var symbolType : CalendarSymbolType = .short
-    var font : Font? = nil
+    var weeks : [String]
+    var symbolType : CalendarSymbolType
+    var font : Font?
+    
+    ///- Parameter weeks : Custom week symbols.
+    ///- Parameter symbolType : if you not use custom symbol,you can choose system week symbol style (short,very short).
+    ///- Parameter font : custom Font
+    public init(weeks : [String] = [],
+                symbolType : CalendarSymbolType = .short,
+                font : Font? = nil) {
+        self.weeks = weeks
+        self.symbolType = symbolType
+        self.font = font
+    }
     
     public var body: some View {
         HStack(spacing:0){

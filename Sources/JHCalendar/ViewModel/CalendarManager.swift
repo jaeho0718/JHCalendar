@@ -7,6 +7,9 @@
 
 import Foundation
 
+///CalendarManager
+///
+///This class conform to observableobject. Use this class to manage calendar state (ex. calendar mode, calendar page, calendar day select..)
 public class CalendarManager : ObservableObject {
     
     @Published var mode : CalendarMode {
@@ -22,6 +25,14 @@ public class CalendarManager : ObservableObject {
     let startDate : CalendarComponents
     let endDate : CalendarComponents
     
+    ///CalendarManager
+    ///
+    ///This class conform to observableobject. Use this class to manage calendar state (ex. calendar mode, calendar page, calendar day select..)
+    ///- Parameter mode : Calendar mode - Month,Week.
+    ///In macos, only support Month mode.
+    ///- Parameter startDate : Calendar first date
+    ///- Parameter endDate : Calendar last date
+    ///- Parameter startPoint : Calendar start point when view appears.
     public init(mode : CalendarMode = .Month,
                 startDate : CalendarComponents = .startDefault,
                 endDate : CalendarComponents = .endDefault,
@@ -66,7 +77,11 @@ public class CalendarManager : ObservableObject {
         self.page = pg
     }
     
-    public func changeMode(mode newValue : CalendarMode? = nil) {
+    ///Set CalendarMode
+    ///
+    ///If mode parameter is nil, page is automatically changed according to current page value.
+    ///- Parameter mode : CalendarMode
+    public func setMode(mode newValue : CalendarMode? = nil) {
         if let newValue = newValue {
             mode = newValue
         } else {
@@ -79,6 +94,9 @@ public class CalendarManager : ObservableObject {
         }
     }
     
+    ///Set CalendarPage
+    ///
+    ///To change programmatically calendar page, you should use this method.
     public func setPage(component : CalendarComponents) {
         switch mode {
         case .Month:
@@ -91,6 +109,7 @@ public class CalendarManager : ObservableObject {
             page.weekPage = CalendarComponents(year: newDate.year, month: newDate.month, day: newDate.day)
         }
     }
+    
     
     func changeMode(newValue : CalendarMode) {
         switch newValue {

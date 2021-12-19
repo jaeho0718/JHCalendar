@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+///SwiftUI Customizable CalendarView
 public struct JHCalendar<Content : View> : View {
     
     @EnvironmentObject var manager : CalendarManager
@@ -27,6 +28,16 @@ public struct JHCalendar<Content : View> : View {
     var showTitle : Bool = true
     var showWeekBar : Bool = true
     
+    ///SwiftUI Customizable CalendarView
+    ///
+    ///SwiftUI Customizable CalendarView. You can customzie all components of calendar.
+    ///
+    ///JHCalendarView support variety view modifier and options.
+    ///
+    ///You can customize Day Content by using your custom view.
+    ///If you don't want to define CustomDayView, use DefaultCalendarCell.
+    ///- Parameter cellHeight : DayView height
+    ///- Parameter content : CustomDayView
     public init(cellHeight : CGFloat = 50,
                 @ViewBuilder content : @escaping (CalendarComponents) -> Content) {
         self.cellHeight = cellHeight
@@ -132,7 +143,6 @@ struct JHCalendar_Previews: PreviewProvider {
         JHCalendar{ comp in
             DefaultCalendarCell(component: comp)
         }
-        .calendarDisplayMode(mode: .scroll)
         .environmentObject(CalendarManager())
     }
 }
