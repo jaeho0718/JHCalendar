@@ -7,117 +7,15 @@
 
 import Foundation
 
-public struct CalendarComponent {
+public struct CalendarComponents : Hashable,Strideable{
+    
     public var year : Int
     public var month : Int
     public var day : Int
-    
-    ///DateComponts
-    public var component : DateComponents {
-        return .init(calendar:.current,year: year, month: month, day: day,hour: 0,minute: 0)
-    }
     
     public var date : Date {
-        guard let result = component.date else { return Date() }
-        return result
-    }
-    
-    /// 1 : Sunday , 2 : Monday , 3 : Tuesday , 4 :  Wednesday, 5 : Thursday , 6 : Friday , 7: Saturday
-    public var startWeek : Int {
-        return date.weekday
-    }
-    
-    public var lastWeek : Int {
-        guard let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: date)
-                else { return 1 }
-        guard let lastDate = Calendar.current.date(byAdding: .day, value: -1, to: nextMonth)
-                else { return 1 }
-        return lastDate.weekday
-    }
-    
-    public var endDay : Int {
-        guard let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: date)
-                else { return 1 }
-        guard let lastDate = Calendar.current.date(byAdding: .day, value: -1, to: nextMonth)
-                else { return 1 }
-        return lastDate.day
-    }
-    
-}
-
-extension CalendarComponent {
-    
-    /// 4 year befor.
-    public static let startDefault : CalendarComponent = .init(year: Date().fourYearBefore.year,
-                                                        month: Date().fourYearBefore.month,
-                                                        day: Date().fourYearBefore.day)
-    
-    /// 4 year later
-    public static let endDefault : CalendarComponent = .init(year: Date().fourYearLater.year,
-                                                        month: Date().fourYearLater.month,
-                                                        day: Date().fourYearLater.day)
-    
-    /// current
-    public static let currentDefault : CalendarComponent = .init(year: Date().year,
-                                                          month: Date().month,
-                                                          day: Date().day)
-}
-
-extension CalendarComponent {
-    
-    /// Compare components. 
-    public func compareComponent(_ component : CalendarComponent) -> TimeInterval {
-        guard let selfDate = self.component.date else { return 0 }
-        guard let compareDate = component.component.date else { return 0 }
-        return selfDate.timeIntervalSince(compareDate)
-    }
-    
-}
-
-public struct MonthDayComponent : Identifiable {
-    public var index : Int
-    public var isCurrentMonth : Bool
-    public var data : CalendarComponent
-    public var id : Int {
-        index
-    }
-}
-
-public struct YearMonthComponent : Identifiable {
-    public var index : Int
-    public var data : CalendarComponent
-    public var tag : PageComponent
-    public var id : Int {
-        index
-    }
-}
-
-public struct WeekComponent : Identifiable {
-    public var index : Int
-    public var data : [WeekDayComponent]
-    public var tag : PageComponent
-    public var id : Int {
-        index
-    }
-}
-
-public struct WeekDayComponent : Identifiable {
-    public var index : Int
-    public var isCurrentMonth : Bool
-    public var data : CalendarComponent
-    public var id : Int {
-        index
-    }
-}
-
-public struct PageComponent : Hashable {
-    
-    public var year : Int
-    public var month : Int
-    public var day : Int
-    
-    public static func == (lhs: PageComponent, rhs: PageComponent) -> Bool {
-        return lhs.year == rhs.year && lhs.month == rhs.month && lhs.day == rhs.day
+        let comp = DateComponents(year:year,month: month,day: day,hour: 0,minute: 0)
+        return Calendar.current.date(from: comp) ?? Date()
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -125,8 +23,85 @@ public struct PageComponent : Hashable {
         hasher.combine(month)
         hasher.combine(day)
     }
+    
+    public static func == (lhs: CalendarComponents, rhs: CalendarComponents) -> Bool {
+        return lhs.year == rhs.year && lhs.month == rhs.month && lhs.day == rhs.day
+    }
+    
+    public func advanced(by n: Int) -> CalendarComponents {
+        let value = self
+        guard let next = Calendar.current.date(byAdding: .day, value: n, to: value.date)  else {return value}
+        return CalendarComponents(year: next.year, month: next.month, day: next.day)
+    }
+    
+    public func distance(to other: CalendarComponents) -> Int {
+        let current = self
+        return Int(other.date.timeIntervalSince(current.date))
+    }
+}
+
+extension CalendarComponents {
+    
+    /// 1 : Sunday , 2 : Monday , 3 : Tuesday , 4 :  Wednesday, 5 : Thursday , 6 : Friday , 7: Saturday
+    var startWeek : Int {
+        let monthDate = CalendarComponents(year: year, month: month, day: 1).date
+        return monthDate.weekday
+    }
+    
+    var endDay : Int {
+        let monthDate = CalendarComponents(year: year, month: month, day: 1).date
+        guard let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: monthDate)
+                       else { return 1 }
+        guard let lastDate = Calendar.current.date(byAdding: .day, value: -1, to: nextMonth)
+                       else { return 1 }
+        return lastDate.day
+    }
+}
+
+public extension CalendarComponents {
+    
+    static let startDefault : CalendarComponents = CalendarComponents(year: Date.current.fourYearBefore.year,
+                                                                      month: Date.current.fourYearBefore.month,
+                                                                      day: Date.current.fourYearBefore.day)
+    static let endDefault : CalendarComponents = CalendarComponents(year: Date.current.fourYearLater.year,
+                                                                    month: Date.current.fourYearLater.month,
+                                                                    day: Date.current.fourYearLater.day)
+    static let current : CalendarComponents = CalendarComponents(year: Date.current.year,
+                                                                 month: Date.current.month,
+                                                                 day: Date.current.day)
+}
+
+struct DayComponent : Identifiable {
+    var id : Int
+    var component : CalendarComponents
+}
+
+public struct CalendarPage {
+    var monthPage : CalendarComponents
+    var weekPage : CalendarComponents
+    var mode : CalendarMode
+    
+    public var current : CalendarComponents {
+        switch mode {
+        case .Week :
+            return weekPage
+        case .Month :
+            return monthPage
+        }
+    }
 }
 
 public enum CalendarMode {
-    case Month,Week
+    case Month
+    case Week
+}
+
+public enum CalendarSymbolType {
+    case veryshort
+    case short
+}
+
+public enum CalendarDisplayMode {
+    case page
+    case scroll
 }

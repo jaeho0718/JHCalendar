@@ -36,4 +36,6 @@ extension Date {
         Calendar.current.date(byAdding: .year, value: -4, to: self) ?? Date()
     }
     
+    static let current = Date()
+    
 }
