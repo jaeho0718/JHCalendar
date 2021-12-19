@@ -12,13 +12,13 @@ import Foundation
 ///This class conform to observableobject. Use this class to manage calendar state (ex. calendar mode, calendar page, calendar day select..)
 public class CalendarManager : ObservableObject {
     
-    @Published var mode : CalendarMode {
+    @Published public var mode : CalendarMode {
         willSet(newValue){
             changeMode(newValue: newValue)
         }
     }
-    @Published var page : CalendarPage
-    @Published var selectedComponent : CalendarComponents
+    @Published public var page : CalendarPage
+    @Published public var selectedComponent : CalendarComponents
     
     let weekComponents : [DayComponent]
     let monthComponents : [DayComponent]
